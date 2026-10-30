@@ -3,6 +3,7 @@
 
 #include "audio.h"
 
+#include <Arduino.h>
 #include <FS.h>
 
 class I2S_Audio : public DAC_Audio {
@@ -11,10 +12,10 @@ class I2S_Audio : public DAC_Audio {
         int lrc;
         int din;
 
-        fs::FS& filesystem;
+        fs::FS* filesystem;
 
     public:
-        I2S_Audio(int i2s_bclk, int i2s_lrc, int i2s_din, fs::FS& mounted_filesystem);
+        I2S_Audio(int i2s_bclk, int i2s_lrc, int i2s_din, fs::FS* mounted_filesystem);
 
         bool setup() override;
         bool playFile(String path) override;

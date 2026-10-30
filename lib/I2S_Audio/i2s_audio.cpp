@@ -1,13 +1,17 @@
 #include <i2s_audio.h>
 
+#include <Arduino.h>
 #include <Audio.h>
+#include <FS.h>
 
 Audio audio;
 
-I2S_Audio::I2S_Audio(int i2s_bclk, int i2s_lrc, int i2s_din, fs::FS& mounted_filesystem) : filesystem(mounted_filesystem) {
+I2S_Audio::I2S_Audio(int i2s_bclk, int i2s_lrc, int i2s_din, fs::FS* mounted_filesystem) {
     bclk = i2s_bclk;
     lrc = i2s_lrc;
     din = i2s_din;
+
+    filesystem = mounted_filesystem;
 }
 
 bool I2S_Audio::setup() {
@@ -24,7 +28,7 @@ bool I2S_Audio::setup() {
 }
 
 bool I2S_Audio::playFile(String path) {
-    return audio.connecttoFS(filesystem, path.c_str());
+    return audio.connecttoFS(*filesystem, path.c_str());
 }
 
 bool I2S_Audio::loop() {

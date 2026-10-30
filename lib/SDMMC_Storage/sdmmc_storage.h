@@ -3,6 +3,9 @@
 
 #include "storage.h"
 
+#include <Arduino.h>
+#include <FS.h>
+
 #define MOUNTPOINT "/sdcard"
 
 class SDMMC_Storage : public Storage {
@@ -22,6 +25,7 @@ class SDMMC_Storage : public Storage {
 
         bool setup() override;
         bool loop() override;
+        fs::FS* getFS() override;
 };
 
 #endif

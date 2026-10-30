@@ -1,5 +1,7 @@
 #include <sdmmc_storage.h>
 
+#include <Arduino.h>
+#include <FS.h>
 #include <SD_MMC.h>
 
 SDMMC_Storage::SDMMC_Storage(int sd_clk, int sd_cmd, int sd_d0) {
@@ -40,4 +42,8 @@ bool SDMMC_Storage::setup() {
 
 bool SDMMC_Storage::loop() {
     return true;
+}
+
+fs::FS* SDMMC_Storage::getFS() {
+    return &SD_MMC;
 }

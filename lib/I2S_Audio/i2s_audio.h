@@ -3,6 +3,8 @@
 
 #include "audio.h"
 
+#include <AudioTools.h>
+
 #include <Arduino.h>
 #include <FS.h>
 
@@ -11,6 +13,14 @@ class I2S_Audio : public DAC_Audio {
         int bclk;
         int lrc;
         int din;
+
+        I2SStream dac;
+        VolumeStream vol;
+        EncodedAudioStream decoder;
+
+        File audioFile;
+
+        StreamCopy copier;
 
         fs::FS* filesystem;
 

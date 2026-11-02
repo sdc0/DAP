@@ -3,3 +3,4 @@
 build/
 
 lib/ESP32-audioI2S*/
+lib/arduino-audio-tools/

@@ -1,12 +1,10 @@
 #include <i2s_audio.h>
 
+#include <AudioTools/AudioCodecs/CodecMP3Helix.h>
 #include <Arduino.h>
-#include <Audio.h>
 #include <FS.h>
 
-Audio audio;
-
-I2S_Audio::I2S_Audio(int i2s_bclk, int i2s_lrc, int i2s_din, fs::FS* mounted_filesystem) {
+I2S_Audio::I2S_Audio(int i2s_bclk, int i2s_lrc, int i2s_din, fs::FS* mounted_filesystem) : vol(dac), decoder(&vol, new MP3DecoderHelix()) {
     bclk = i2s_bclk;
     lrc = i2s_lrc;
     din = i2s_din;
@@ -15,12 +13,18 @@ I2S_Audio::I2S_Audio(int i2s_bclk, int i2s_lrc, int i2s_din, fs::FS* mounted_fil
 }
 
 bool I2S_Audio::setup() {
-    if (!audio.setPinout(bclk, lrc, din)) {
-        Serial.println("Failed to set I2S pins");
-        return false;
-    }
+    auto config = dac.defaultConfig(TX_MODE);
+    config.pin_bck = bclk;
+    config.pin_ws = lrc;
+    config.pin_data = din;
+    dac.begin(config);
 
-    audio.setVolume(5);
+    auto vcfg = vol.defaultConfig();
+    vcfg.copyFrom(config);
+    vol.begin(vcfg);
+    vol.setVolume(0.1);
+
+    decoder.begin();
 
     return playFile("/Music/test.mp3");
 
@@ -28,11 +32,14 @@ bool I2S_Audio::setup() {
 }
 
 bool I2S_Audio::playFile(String path) {
-    return audio.connecttoFS(*filesystem, path.c_str());
+    audioFile = filesystem->open(path);
+    copier.begin(decoder, audioFile);
+
+    return true;
 }
 
 bool I2S_Audio::loop() {
-    audio.loop();
+    if (!copier.copy()) stop();
 
     return true;
 }

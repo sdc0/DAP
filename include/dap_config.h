@@ -43,3 +43,16 @@
 #define MIN(x, y) ((x < y) ? x : y)
 
 #endif
+
+#ifndef DAP_GLOBAL_OBJECTS_H
+#define DAP_GLOBAL_OBJECTS_H
+
+#include <i2s_audio.h>
+#include <sdmmc_storage.h>
+#include <touchwheel_input.h>
+
+extern I2S_Audio* i2s;
+extern SDMMC_Storage* sdmmc;
+extern Touchwheel_Input* tw;
+
+#endif

@@ -29,7 +29,7 @@ void setup() {
         while(1);
     }
 
-    tw = new Touchwheel_Input(std::vector<int>{TOUCHWHEEL_A, TOUCHWHEEL_B, TOUCHWHEEL_C}, 1000);
+    tw = new Touchwheel_Input(std::vector<int>{TOUCHWHEEL_A, TOUCHWHEEL_B, TOUCHWHEEL_C});
     if (!tw->setup()) {
         Serial.println("Failed somewhere in touchwheel setup");
         while(1);
@@ -41,4 +41,6 @@ void setup() {
 void loop() {
     dac->loop();
     tw->loop();
+
+    handleInputs();
 }

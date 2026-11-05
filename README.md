@@ -10,3 +10,5 @@ virtual const char*           whoIsIt() {return NULL; };
 
 
 **IMPORTANT NOTE: disregard everything above this for now (leaving just in case I need to use the library later), switched to Phil Schatzmann's arduino-audio-tools git repo cloned into lib/, requiring no changes (other than getting rid of ESP32-audioI2S because of a conflicting RingBuffer definition I think)**
+
+I did end up changing line 53 of src/AudioToolsConfig.h to set USE_AUDIO_LOGGING to false

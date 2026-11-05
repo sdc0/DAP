@@ -22,7 +22,7 @@ bool I2S_Audio::setup() {
     auto vcfg = vol.defaultConfig();
     vcfg.copyFrom(config);
     vol.begin(vcfg);
-    vol.setVolume(0.1);
+    vol.setVolume(0.01);
 
     decoder.begin();
 
@@ -42,4 +42,8 @@ bool I2S_Audio::loop() {
     if (!copier.copy()) stop();
 
     return true;
+}
+
+void I2S_Audio::setVolume(float volume) {
+    vol.setVolume(volume);
 }

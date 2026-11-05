@@ -30,6 +30,8 @@ class I2S_Audio : public DAC_Audio {
         bool setup() override;
         bool playFile(String path) override;
         bool loop() override;
+
+        void setVolume(float volume);
 };
 
 #endif

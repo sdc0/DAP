@@ -50,9 +50,11 @@
 #include <i2s_audio.h>
 #include <sdmmc_storage.h>
 #include <touchwheel_input.h>
+#include <dpad_input.h>
 
 extern I2S_Audio* i2s;
 extern SDMMC_Storage* sdmmc;
 extern Touchwheel_Input* tw;
+extern DPad_Input* dpad;
 
 #endif

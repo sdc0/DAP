@@ -10,16 +10,13 @@
 
 class I2S_Audio : public DAC_Audio {
     private:
-        int bclk;
-        int lrc;
-        int din;
+        int bclk, lrc, din;
 
         I2SStream dac;
         VolumeStream vol;
         EncodedAudioStream decoder;
 
         File audioFile;
-
         StreamCopy copier;
 
         fs::FS* filesystem;

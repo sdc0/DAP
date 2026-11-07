@@ -12,7 +12,6 @@ class Touchwheel_Input : public Input {
     private:
         std::vector<int> pins;
 
-        float current;
         float prev;
         float radial_threshold;
 

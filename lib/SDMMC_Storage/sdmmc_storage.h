@@ -10,12 +10,7 @@
 
 class SDMMC_Storage : public Storage {
     private:
-        int cmd;
-        int clk;
-        int d0;
-        int d1;
-        int d2;
-        int d3;
+        int cmd, clk, d0, d1, d2, d3;
 
         bool onebit;
 

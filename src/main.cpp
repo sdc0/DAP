@@ -6,10 +6,12 @@
 #include <sdmmc_storage.h>
 #include <i2s_audio.h>
 #include <touchwheel_input.h>
+#include <dpad_input.h>
 
 SDMMC_Storage* sd;
 I2S_Audio* dac;
 Touchwheel_Input* tw;
+DPad_Input* dpad;
 
 void setup() {
     Serial.begin(115200);
@@ -35,12 +37,22 @@ void setup() {
         while(1);
     }
 
+    dpad = new DPad_Input(DPAD_UP, DPAD_DOWN, DPAD_LEFT, DPAD_RIGHT);
+    if (!dpad->setup()) {
+        Serial.println("Failed somewhere in dpad setup");
+        while(1);
+    }
+
+    // setup input mappings
+
+
     Serial.println("Setup successful");
 }
 
 void loop() {
     dac->loop();
     tw->loop();
+    dpad->loop();
 
     handleInputs();
 }

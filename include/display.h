@@ -14,7 +14,7 @@ class Display {
 class Renderer {
     public:
         virtual void renderMenu(Menu*) { };
-        virtual void renderOption(String text, bool isSelected, bool wasSelected) { };
+        virtual void renderOption(String text, int index, bool isSelected, bool wasSelected) { };
 };
 
 #endif

@@ -66,6 +66,33 @@ String moveOutOfDirectory() {
     return toReturn;
 }
 
+
+Menu* settingsMenu() {
+    Menu* m = new Menu();
+
+    for (int i = 0; i < 5; i++) {
+        m->addOption("Functional " + i, [](Menu_Option* o) { Serial.println(o->text); }, NULL, NULL);
+    }
+
+    return m;
+}
+
+Menu* generator(Menu_Option* o, Menu* prev) {
+    Menu *m = new Menu();
+
+    for (int i = 0; i < prev->getOptionsLength(); i++) {
+        m->addOption(o->text + " -> " + prev->getOption(i)->text, [](Menu_Option *o) { Serial.println(o->text); }, NULL, NULL);
+    }
+
+    return m;
+}
+
 Menu* setupMainMenu() {
     Menu *m = new Menu();
+
+    m->addOption("Functional", [](Menu_Option* o) { Serial.println(o->text); }, NULL, NULL);
+    m->addOption("Static Nesting", NULL, settingsMenu(), NULL);
+    m->addOption("Dynamic Nesting", NULL, NULL, generator);
+
+    return m;
 }

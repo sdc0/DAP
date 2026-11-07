@@ -13,15 +13,17 @@ typedef void (*Render_Option_Func)(String text, int index, bool isSelected, bool
 
 class ST7789_Display : public Display {
     private:
-        int din;
-        int sck;
-        int cs;
-        int rst;
-        int dc;
-        int bl;
+        int din, sck, cs, rst, dc, bl;
+
+        Arduino_DataBus* bus;
+        Arduino_GFX* display;
+
+        int screen_height, screen_width;
 
     public: 
-        ST7789_Display(int din, int sck, int cs, int rst, int dc, int bl);
+        Arduino_GFX* canvas;
+
+        ST7789_Display(int din, int sck, int cs, int rst, int dc, int bl, int height, int width);
 
         bool setup() override;
         bool loop() override;
@@ -31,13 +33,16 @@ class Half_Screen_Renderer : public Renderer {
     private:
         int offset_x;
         int first_offset_y;
+        int bezel_height;
         const GFXfont* font;
 
+        Arduino_GFX* canvas;
+
     public:
-        Half_Screen_Renderer(int o_x, int o_y, const GFXfont* f);
+        Half_Screen_Renderer(int o_x, int o_y, int b, const GFXfont* f, Arduino_GFX* g);
 
         void renderMenu(Menu* m) override;
-        void renderOption(String text, bool isSelected, bool wasSelected);
+        void renderOption(String text, int index, bool isSelected, bool wasSelected);
 };
 
 #endif

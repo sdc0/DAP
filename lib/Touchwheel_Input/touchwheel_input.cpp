@@ -34,6 +34,7 @@ bool Touchwheel_Input::loop() {
 }
 
 float Touchwheel_Input::wheel_pos() {
+    // TODO: implement dynamic pin reading for >3 pin touchwheels
     // dynamic calibration code for normalizing on (assumption of) sinusoidal proximities
     float a = touchRead(pins[0]);
     float b = touchRead(pins[1]);

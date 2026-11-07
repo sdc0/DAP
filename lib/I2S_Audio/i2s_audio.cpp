@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <FS.h>
 
+// TODO: fix decoder so that multiple formats can be read (ex. FLAC, WAV, ...)
 I2S_Audio::I2S_Audio(int i2s_bclk, int i2s_lrc, int i2s_din, fs::FS* mounted_filesystem) : vol(dac), decoder(&vol, new MP3DecoderHelix()) {
     bclk = i2s_bclk;
     lrc = i2s_lrc;

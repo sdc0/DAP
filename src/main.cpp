@@ -12,6 +12,8 @@
 #include "MyriadProRegular9pt7b.h"
 #include "MyriadProBold9pt7b.h"
 
+void secondCoreLoop(void*);
+
 SDMMC_Storage* sd;
 I2S_Audio* dac;
 ST7789_Display* screen;
@@ -102,15 +104,31 @@ void setup() {
         half->renderMenu(current_menu);
     };
 
+    // setup multithreading for more stable audio
+    Serial.println(xTaskCreatePinnedToCore(
+        secondCoreLoop,
+        "audio_thread",
+        64 * 1024,
+        NULL,
+        24,
+        NULL,
+        0
+    ));
+
     Serial.println("Setup successful");
 }
 
 void loop() {
-    dac->loop();
     tw->loop();
     dpad->loop();
 
     handleInputs();
 
     screen->loop();
+}
+
+void secondCoreLoop(void* pvParameters) {
+    while(1) {
+        dac->loop();
+    }
 }

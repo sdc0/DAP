@@ -14,18 +14,21 @@ ST7789_Display::ST7789_Display(int din, int sck, int cs, int rst, int dc, int bl
 
 bool ST7789_Display::setup() {
     bus = new Arduino_ESP32SPI(dc, cs, sck, din, -1, 1);
-    display = new Arduino_ST7789(bus, rst, 0, true, screen_height, screen_width, 0, 0);
-    canvas = new Arduino_Canvas(screen_height, screen_width, display);
+    display = new Arduino_ST7789(bus, rst, 1, true, screen_height, screen_width, 0, 0);
+    canvas = new Arduino_Canvas(screen_width, screen_height, display);
 
     display->begin();
 
     canvas->begin();
     canvas->setTextWrap(false);
     canvas->flush();
+
+    return true;
 }
 
 bool ST7789_Display::loop() {
     canvas->flush();
+    return true;
 }
 
 Half_Screen_Renderer::Half_Screen_Renderer(int o_x, int o_y, int b, const GFXfont* f, Arduino_GFX* g) {

@@ -39,6 +39,19 @@ int Menu::getOptionsLength() {
     return options.size();
 }
 
+bool Menu::moveSelectedUp() {
+    if (current_option <= 0) return false;
+    current_option--;
+    return true;
+}
+
+bool Menu::moveSelectedDown() {
+    if (current_option >= getOptionsLength() - 1) return false;
+    current_option++;
+    return true;
+}
+
+
 void moveIntoDirectory(String next) {
     if (current_dir == "") {
         current_dir = "/";

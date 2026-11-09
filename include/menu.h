@@ -36,6 +36,9 @@ class Menu {
         void addOption(String text, Functional_Call func = NULL, Menu* child = NULL, Menu_Gen gen = NULL);
         void clearOptions();
         int getOptionsLength();
+
+        bool moveSelectedUp();
+        bool moveSelectedDown();
 };
 
 Menu* setupMainMenu();

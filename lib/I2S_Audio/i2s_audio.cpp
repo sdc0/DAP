@@ -40,9 +40,7 @@ bool I2S_Audio::playFile(String path) {
 }
 
 bool I2S_Audio::loop() {
-    if (!copier.copy()) stop();
-
-    return true;
+    return copier.copy();
 }
 
 void I2S_Audio::setVolume(float volume) {

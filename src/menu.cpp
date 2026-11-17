@@ -1,5 +1,7 @@
 #include "menu.h"
 
+#include "dap_config.h"
+
 Menu* root_menu = NULL;
 Menu* current_menu  = NULL;
 
@@ -7,7 +9,16 @@ String current_dir = "";
 
 Menu::Menu() {
     current_option = 0;
+    top_option = 0;
     prev = NULL;
+    exit = NULL;
+}
+
+Menu::Menu(Exit_Call e) {
+    current_option = 0;
+    top_option = 0;
+    prev = NULL;
+    exit = e;
 }
 
 Menu_Option* Menu::getOption(int index) {
@@ -16,14 +27,14 @@ Menu_Option* Menu::getOption(int index) {
 
 void Menu::addOption(String text, Functional_Call func, Menu* child, Menu_Gen gen) {
     Option_Type type;
-    if (func != NULL && child == NULL && gen == NULL) {
-        type = FUNCTIONAL;
-    }else if (func == NULL && child != NULL && gen == NULL) {
+    if (child != NULL && gen == NULL) {
         type = STATIC_NESTING;
-    }else if (func == NULL && child == NULL && gen != NULL) {
+    }else if (child == NULL && gen != NULL) {
         type = DYNAMIC_NESTING;
+    }else if (func != NULL) {
+        type = FUNCTIONAL;   
     }else {
-        Serial.printf("Option '%s' was not applicable to an option type, not adding\n", text);
+        Serial.printf("Option '%s' was not applicable to an option type, not adding\n", text.c_str());
         return;
     }
 
@@ -91,7 +102,7 @@ Menu* settingsMenu() {
 }
 
 Menu* generator(Menu_Option* o, Menu* prev) {
-    Menu *m = new Menu();
+    Menu* m = new Menu();
 
     for (int i = 0; i < prev->getOptionsLength(); i++) {
         m->addOption(o->text + " -> " + prev->getOption(i)->text, [](Menu_Option *o) { Serial.println(o->text); }, NULL, NULL);
@@ -100,12 +111,45 @@ Menu* generator(Menu_Option* o, Menu* prev) {
     return m;
 }
 
+void enterDirHelper(Menu_Option* o) {
+    moveIntoDirectory(o->text);
+}
+
+void exitDirHelper(Menu* m) {
+    Serial.println("in exit func");
+    moveOutOfDirectory();
+}
+
+void playAudioHelper(Menu_Option* o) {
+    if (!audio->playFile(current_dir + "/" + o->text)) Serial.println("Failed to pplay audio file");
+}
+
+Menu* SD_Generator(Menu_Option *o, Menu* prev) {
+    Menu* m = new Menu(&exitDirHelper);
+
+    File root = storage->getFS()->open(current_dir);
+    Serial.println(current_dir);
+    while (true) {
+        File entry = root.openNextFile();
+        if (!entry) break;
+        Serial.println(entry.name());
+
+        if (entry.isDirectory()) {
+            m->addOption(entry.name(), &enterDirHelper, NULL, &SD_Generator);
+        }else {
+            m->addOption(entry.name(), &playAudioHelper, NULL, NULL);
+        }
+    }
+
+    return m;
+}
+
 Menu* setupMainMenu() {
-    Menu *m = new Menu();
+    Menu* m = new Menu();
 
     m->addOption("Functional", [](Menu_Option* o) { Serial.println(o->text); }, NULL, NULL);
     m->addOption("Static Nesting", NULL, settingsMenu(), NULL);
-    m->addOption("Dynamic Nesting", NULL, NULL, generator);
+    m->addOption("File Browse", &enterDirHelper, NULL, &SD_Generator);
 
     return m;
 }

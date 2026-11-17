@@ -14,8 +14,8 @@
 
 void secondCoreLoop(void*);
 
-SDMMC_Storage* sd;
-I2S_Audio* dac;
+SDMMC_Storage* storage;
+I2S_Audio* audio;
 ST7789_Display* screen;
 Half_Screen_Renderer* half;
 Touchwheel_Input* tw;
@@ -27,14 +27,14 @@ void setup() {
 
     pinMode(LED_BUILTIN, OUTPUT);
 
-    sd = new SDMMC_Storage(SD_MMC_CLK, SD_MMC_CMD, SD_MMC_D0, SD_MMC_D1, SD_MMC_D2, SD_MMC_D3);
-    if (!sd->setup()) {
+    storage = new SDMMC_Storage(SD_MMC_CLK, SD_MMC_CMD, SD_MMC_D0, SD_MMC_D1, SD_MMC_D2, SD_MMC_D3);
+    if (!storage->setup()) {
         Serial.println("Failed somewhere in SD Card setup");
         while(1);
     }
 
-    dac = new I2S_Audio(I2S_DAC_BCLK, I2S_DAC_LRC, I2S_DAC_DIN, sd->getFS());
-    if (!dac->setup()) {
+    audio = new I2S_Audio(I2S_DAC_BCLK, I2S_DAC_LRC, I2S_DAC_DIN, storage->getFS());
+    if (!audio->setup()) {
         Serial.println("Failed somewhere in Audio setup");
         while(1);
     }
@@ -45,7 +45,7 @@ void setup() {
         while(1);
     }
 
-    half = new Half_Screen_Renderer(5, 15, 15, &MyriadProBold9pt7b, screen->canvas);
+    half = new Half_Screen_Renderer(5, 23, &MyriadProBold9pt7b, screen->canvas);
     root_menu = setupMainMenu();
     current_menu = root_menu;
 
@@ -74,8 +74,9 @@ void setup() {
     };
 
     input_mapping[BTN_RIGHT] = []() {
-        // enter submenu OR call function
         Menu_Option* o = current_menu->getOption(current_menu->current_option);
+
+        if (o->func != NULL) o->func(o);
 
         if (o->type == STATIC_NESTING) {
             o->child->prev = current_menu;
@@ -84,8 +85,6 @@ void setup() {
             o->child = o->gen(o, current_menu);
             o->child->prev = current_menu;
             current_menu = o->child;
-        }else {
-            o->func(o);
         }
 
         half->renderMenu(current_menu);
@@ -93,6 +92,8 @@ void setup() {
 
     input_mapping[BTN_LEFT] = []() {
         if (current_menu->prev == NULL) return;
+
+        if (current_menu->exit != NULL) current_menu->exit(current_menu);
 
         current_menu = current_menu->prev;
         Menu_Option* o = current_menu->getOption(current_menu->current_option);
@@ -102,6 +103,14 @@ void setup() {
         }
 
         half->renderMenu(current_menu);
+    };
+
+    input_mapping[GESTURE_UP] = []() {
+        audio->setVolume(audio->currentVolume + 0.01);
+    };
+
+    input_mapping[GESTURE_DOWN] = []() {
+        audio->setVolume(audio->currentVolume - 0.01);
     };
 
     // setup multithreading for more stable audio
@@ -129,6 +138,7 @@ void loop() {
 
 void secondCoreLoop(void* pvParameters) {
     while(1) {
-        dac->loop();
+        audio->loop();
+        vTaskDelay(1);
     }
 }

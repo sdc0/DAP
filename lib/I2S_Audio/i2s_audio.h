@@ -22,6 +22,8 @@ class I2S_Audio : public DAC_Audio {
         fs::FS* filesystem;
 
     public:
+        float currentVolume;
+
         I2S_Audio(int i2s_bclk, int i2s_lrc, int i2s_din, fs::FS* mounted_filesystem);
 
         bool setup() override;

@@ -32,14 +32,15 @@ class ST7789_Display : public Display {
 class Half_Screen_Renderer : public Renderer {
     private:
         int offset_x;
-        int first_offset_y;
         int bezel_height;
+        uint16_t text_height;
+        int max_rows;
         const GFXfont* font;
 
         Arduino_GFX* canvas;
 
     public:
-        Half_Screen_Renderer(int o_x, int o_y, int b, const GFXfont* f, Arduino_GFX* g);
+        Half_Screen_Renderer(int o_x, int b, const GFXfont* f, Arduino_GFX* g);
 
         void renderMenu(Menu* m) override;
         void renderOption(String text, int index, bool isSelected, bool wasSelected);

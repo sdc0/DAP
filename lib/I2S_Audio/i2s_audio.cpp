@@ -23,11 +23,9 @@ bool I2S_Audio::setup() {
     auto vcfg = vol.defaultConfig();
     vcfg.copyFrom(config);
     vol.begin(vcfg);
-    vol.setVolume(0.01);
+    setVolume(0.01);
 
     decoder.begin();
-
-    return playFile("/Music/test.mp3");
 
     return true;
 }
@@ -45,4 +43,5 @@ bool I2S_Audio::loop() {
 
 void I2S_Audio::setVolume(float volume) {
     vol.setVolume(volume);
+    currentVolume = volume;
 }

@@ -13,6 +13,7 @@ enum Option_Type {
 
 typedef void (*Functional_Call)(Menu_Option*);
 typedef Menu* (*Menu_Gen)(Menu_Option*, Menu*);
+typedef void (*Exit_Call)(Menu*);
 
 struct Menu_Option {
     String text;
@@ -28,9 +29,12 @@ class Menu {
 
     public:
         int current_option;
+        int top_option;
         Menu *prev;
+        Exit_Call exit;
 
         Menu();
+        Menu(Exit_Call e);
 
         Menu_Option* getOption(int index);
         void addOption(String text, Functional_Call func = NULL, Menu* child = NULL, Menu_Gen gen = NULL);

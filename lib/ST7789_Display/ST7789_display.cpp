@@ -31,13 +31,19 @@ bool ST7789_Display::loop() {
     return true;
 }
 
-Half_Screen_Renderer::Half_Screen_Renderer(int o_x, int o_y, int b, const GFXfont* f, Arduino_GFX* g) {
+Half_Screen_Renderer::Half_Screen_Renderer(int o_x, int b, const GFXfont* f, Arduino_GFX* g) {
     offset_x = o_x;
-    first_offset_y = o_y;
     bezel_height = b;
 
     font = f;
     canvas = g;
+
+    int16_t x1, x2;
+    uint16_t w;
+    canvas->setFont(f);
+    canvas->getTextBounds("Qq", 0, 0, &x1, &x2, &w, &text_height);
+
+    max_rows = (canvas->height() - b) / (text_height * 1.5);
 }
 
 void Half_Screen_Renderer::renderMenu(Menu* m) {
@@ -53,14 +59,10 @@ void Half_Screen_Renderer::renderMenu(Menu* m) {
 void Half_Screen_Renderer::renderOption(String text, int index, bool isSelected, bool wasSelected) {
     canvas->setFont(font);
 
-    int16_t x1, x2;
-    uint16_t w, h;
-    canvas->getTextBounds("Qq", 0, 0, &x1, &x2, &w, &h);
+    int posy = bezel_height + 1.5 * text_height * index;
 
-    int posy = first_offset_y + 1.5 * h * index;
-
-    if (wasSelected || isSelected) canvas->fillRect(0, posy, canvas->width() / 2, h * 1.5, (isSelected) ? RGB565_LIGHTBLUE : RGB565_WHITE);
-    canvas->setCursor(offset_x, posy + h);
+    if (wasSelected || isSelected) canvas->fillRect(0, posy, canvas->width() / 2, text_height * 1.5, (isSelected) ? RGB565_LIGHTBLUE : RGB565_WHITE);
+    canvas->setCursor(offset_x, posy + text_height);
     canvas->setTextColor(isSelected ? RGB565_WHITE : RGB565_BLACK);
     canvas->print(text);
 }
